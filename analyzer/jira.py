@@ -7,7 +7,7 @@ from urllib.request import Request, urlopen
 JIRA_API_EMAIL = os.environ.get("JIRA_API_EMAIL")
 JIRA_API_TOKEN = os.environ.get("JIRA_API_TOKEN")
 JIRA_API_PAGE_SIZE = os.environ.get("JIRA_ISSUES_TO_ANALYZE", 100)
-MAX_ISSUES_TO_FETCH = os.environ.get("JIRA_ISSUES_TO_ANALYZE", 1000)
+JIRA_MAX_ISSUES_TO_FETCH = os.environ.get("JIRA_MAX_ISSUES_TO_FETCH", 1000)
 
 
 def get_project_issues(jira_project_id):
@@ -38,10 +38,10 @@ def get_project_issues(jira_project_id):
         if not total_issue_count:
             total_issue_count = response_dict["total"]
         all_issues.extend(response_dict["issues"])
-        if (page_number+1)*JIRA_API_PAGE_SIZE >= MAX_ISSUES_TO_FETCH:
+        if (page_number+1)*JIRA_API_PAGE_SIZE >= JIRA_MAX_ISSUES_TO_FETCH:
             print(
                 "First {} issues successfully fetched".format(
-                    MAX_ISSUES_TO_FETCH,
+                    JIRA_MAX_ISSUES_TO_FETCH,
                 )
             )
             break
