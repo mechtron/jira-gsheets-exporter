@@ -1,0 +1,14 @@
+.terraform
+.terragrunt-cache
+
+analyzer/__pycache__
+analyzer/venv
+analyzer/bin
+
+analyzer/httplib2*
+analyzer/oauth2client*
+analyzer/pyasn1*
+analyzer/rsa*
+analyzer/six*
+
+*.pyc
