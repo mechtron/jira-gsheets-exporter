@@ -40,30 +40,41 @@ def update_jira_data(worksheet, issues):
         # Team
         if issues[i]["fields"]["customfield_13805"]:
             cell_list[i*column_count+2].value = issues[i]["fields"]["customfield_13805"]["value"]
+        else:
+            cell_list[i*column_count+2].value = ""
         # Type
         if (
             "customfield_13919" in issues[i]["fields"] and
             issues[i]["fields"]["customfield_13919"]
         ):
             cell_list[i*column_count+3].value = issues[i]["fields"]["customfield_13919"]["value"]
+        else:
+            cell_list[i*column_count+3].value = ""
         # Story points
         if (
             "customfield_10013" in issues[i]["fields"] and
             issues[i]["fields"]["customfield_10013"]
         ):
             cell_list[i*column_count+4].value = issues[i]["fields"]["customfield_10013"]
+        else:
+            cell_list[i*column_count+4].value = ""
         # Business value
         if (
             "customfield_13920" in issues[i]["fields"] and
             issues[i]["fields"]["customfield_13920"]
         ):
             cell_list[i*column_count+5].value = issues[i]["fields"]["customfield_13920"]["value"]
+        else:
+            cell_list[i*column_count+5].value = ""
         # Status
         cell_list[i*column_count+6].value = issues[i]["fields"]["status"]["statusCategory"]["name"]
         # Creator
         cell_list[i*column_count+7].value = issues[i]["fields"]["creator"]["displayName"]
         # Assignee
-        cell_list[i*column_count+8].value = issues[i]["fields"]["assignee"]["displayName"]
+        if issues[i]["fields"]["assignee"]:
+            cell_list[i*column_count+8].value = issues[i]["fields"]["assignee"]["displayName"]
+        else:
+            cell_list[i*column_count+8].value = ""
         # Date created
         cell_list[i*column_count+9].value = issues[i]["fields"]["created"]
         # Date last status change
