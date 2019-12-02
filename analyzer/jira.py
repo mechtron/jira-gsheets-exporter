@@ -6,8 +6,10 @@ from urllib.request import Request, urlopen
 
 JIRA_API_EMAIL = os.environ.get("JIRA_API_EMAIL")
 JIRA_API_TOKEN = os.environ.get("JIRA_API_TOKEN")
-JIRA_API_PAGE_SIZE = os.environ.get("JIRA_ISSUES_TO_ANALYZE", 100)
-JIRA_MAX_ISSUES_TO_FETCH = os.environ.get("JIRA_MAX_ISSUES_TO_FETCH", 1000)
+JIRA_API_PAGE_SIZE = int(os.environ.get("JIRA_ISSUES_TO_ANALYZE", 100))
+JIRA_MAX_ISSUES_TO_FETCH = int(
+    os.environ.get("JIRA_MAX_ISSUES_TO_FETCH", 1000)
+)
 
 
 def get_project_issues(jira_project_id):
