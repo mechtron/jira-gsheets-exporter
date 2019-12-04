@@ -26,14 +26,14 @@ All of the AWS resources provisioned by this project fit within [AWS's always-fr
 
 ## Deploying `jira-gsheets-exporter` to your AWS account
 
-#### Dependencies
+### Dependencies
 
 1. `make`
 1. Terraform v0.12.x
 1. Terragrunt v0.21.x
 1. [`credstash`](https://github.com/fugue/credstash)
 
-#### Setup credentials
+### Setup credentials
 
 1. Obtain Google OAuth2 credentials:
 	1. Open the [Google Developers Console](https://console.developers.google.com/project), select your organization and create a new project/select an existing one.
@@ -41,7 +41,7 @@ All of the AWS resources provisioned by this project fit within [AWS's always-fr
 	1. Enable the Google Sheets and Google Drive APIs
 	1. Click the back arrow and then the "Credentials" link on the left menu
 	1. Click Create credentials > Service account key > New service account. Give your service account a name, make sure "JSON" is selected and click "Create". A JSON file will be automatically downloaded whose contents is your Google service account.
-	
+
 1. Obtain a Jira API token:
 	1. Log in to the [Atlassian API tokens portal](https://id.atlassian.com/manage/api-tokens)
 	1. Click "Create API token"
@@ -52,24 +52,29 @@ All of the AWS resources provisioned by this project fit within [AWS's always-fr
 
 1. Populate the following credstash secrets:
 	1. `google_creds_json`: `credstash -t credstash put google_creds_json <your-google-service-account-json>`
-	2. `jira_api_email`: `credstash -t credstash put jira_api_email <your-jira-email>`
-	3. `jira_api_token`: `credstash -t credstash put jira_api_token <your-jira-token>`
+	1. `jira_api_email`: `credstash -t credstash put jira_api_email <your-jira-email>`
+	1. `jira_api_token`: `credstash -t credstash put jira_api_token <your-jira-token>`
 
-#### Deploy
+### Deploy
 
 1. Update the shared Terragrunt values in `terraform/terragrunt/terragrunt.hcl` to match your AWS account's configuration.
-1. Update the `prod` environment's Terragrunt values in `terraform/terragrunt/prod/terragrunt.hcl`
+1. Open/create the target Google Sheets spreadsheet and share it with the email contained in the Google auth JSON (under `client_email`). Make sure the user has "Can edit" permissions.
+1. Update the `prod` environment's Terragrunt values in `terraform/terragrunt/prod/terragrunt.hcl`:
+	1. `google_sheet_name` is the name of the Google Sheet from the previous step
+	1. `google_sheet_tab_name` is the name of the tab/worksheet within the Google sheet to sync data to
+	1. `jira_project_name` is the project key of the Jira project to fetch issues for
+1. Open `exporter/exporter.py` and update the Python mapping logic within `update_jira_data()`
 1. Deploy the `prod` environment (using the Terragrunt variables stored in `terraform/terragrunt/prod/terragrunt.hcl`):
 
 		ENV=prod TF_ACTION=apply make terragrunt
 
-#### Destroy
+### Destroy
 
 To destroy an environment (in this case `prod`), set the `TF_ACTION` environment variable to `destroy`:
 
 	ENV=prod TF_ACTION=destroy make terragrunt
 
-#### Creating new environments
+### Creating new environments
 
 Creating new environments is as easy as creating a new Terragrunt environment folder:
 
@@ -79,10 +84,9 @@ Creating new environments is as easy as creating a new Terragrunt environment fo
 
 		ENV=<ENV> TF_ACTION=apply make terragrunt
 
-	Where `<ENV>` is your new environment's name.
+	Where `<ENV>` is your new environment's name
 
 ## To do
 
 1. Send failure notifications via SES
-1. Add infrastructure diagram
 1. Add GitHub Actions deployment pipeline

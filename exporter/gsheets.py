@@ -6,14 +6,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 
 GOOGLE_SERVICE_CREDS_JSON = os.environ.get("GOOGLE_SERVICE_CREDS_JSON")
-GOOGLE_SHEET_NAME = os.environ.get(
-    "GOOGLE_SHEET_NAME",
-    "DevOps Team Sprint Analyzer",
-)
-GOOGLE_SHEET_WORKSHEET_NAME = os.environ.get(
-    "GOOGLE_SHEET_WORKSHEET_NAME",
-    "Data",
-)
+GOOGLE_SHEET_NAME = os.environ.get("GOOGLE_SHEET_NAME")
+GOOGLE_SHEET_TAB_NAME = os.environ.get("GOOGLE_SHEET_TAB_NAME")
 
 
 def setup_gspread_worksheet():
@@ -28,7 +22,7 @@ def setup_gspread_worksheet():
     )
     gc = gspread.authorize(credentials)
     sh = gc.open(GOOGLE_SHEET_NAME)
-    return sh.worksheet(GOOGLE_SHEET_WORKSHEET_NAME)
+    return sh.worksheet(GOOGLE_SHEET_TAB_NAME)
 
 
 def write_header_row(worksheet, column_names):

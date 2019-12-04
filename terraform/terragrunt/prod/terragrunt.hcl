@@ -12,5 +12,8 @@ include {
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   environment = "prod"
+  google_sheet_name = "DevOps Team Sprint Analyzer"
+  google_sheet_tab_name = "Data"
+  jira_project_name = "OPS"
   ses_from_email = "mechtrondev@gmail.com"
 }

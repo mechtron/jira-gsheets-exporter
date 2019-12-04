@@ -17,7 +17,7 @@ HEADER_ROW_COLUMNS = [
     "Status", "Creator", "Assignee", "Sprint", "Date Created",
     "Date Last Status Change", "Link",
 ]
-JIRA_PROJECT_NAME = os.environ.get("JIRA_PROJECT_NAME", "OPS")
+JIRA_PROJECT_NAME = os.environ.get("JIRA_PROJECT_NAME")
 
 
 def build_range(row_number, column_count, row_count):
