@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import string
 import time
 
@@ -13,7 +14,7 @@ from jira import get_project_issues
 
 HEADER_ROW_COLUMNS = [
     "Issue", "Summary", "Team", "Type", "Story Points", "Business Value",
-    "Status", "Creator", "Assignee", "Date Created",
+    "Status", "Creator", "Assignee", "Sprint", "Date Created",
     "Date Last Status Change", "Link",
 ]
 JIRA_PROJECT_NAME = os.environ.get("JIRA_PROJECT_NAME", "OPS")
@@ -75,12 +76,18 @@ def update_jira_data(worksheet, issues):
             cell_list[i*column_count+8].value = issues[i]["fields"]["assignee"]["displayName"]
         else:
             cell_list[i*column_count+8].value = ""
+        # Sprint
+        cell_list[i*column_count+9].value = ""
+        if issues[i]["fields"]["customfield_10560"]:
+            match = re.search(r"name=([A-Za-z0-9 _#-]*)", issues[i]["fields"]["customfield_10560"][0])
+            if match:
+                cell_list[i*column_count+9].value = match.group(1)
         # Date created
-        cell_list[i*column_count+9].value = issues[i]["fields"]["created"]
+        cell_list[i*column_count+10].value = issues[i]["fields"]["created"]
         # Date last status change
-        cell_list[i*column_count+10].value = issues[i]["fields"]["statuscategorychangedate"]
+        cell_list[i*column_count+11].value = issues[i]["fields"]["statuscategorychangedate"]
         # Link
-        cell_list[i*column_count+11].value = "{base_url}/browse/{issue_id}".format(
+        cell_list[i*column_count+12].value = "{base_url}/browse/{issue_id}".format(
             base_url=issues[i]["self"].split("/rest")[0],
             issue_id=issues[i]["key"],
         )
