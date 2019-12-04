@@ -5,10 +5,16 @@ analyzer/__pycache__
 analyzer/venv
 analyzer/bin
 
+analyzer/certifi*
+analyzer/chardet*
+analyzer/gspread*
 analyzer/httplib2*
+analyzer/idna*
 analyzer/oauth2client*
 analyzer/pyasn1*
+analyzer/requests*
 analyzer/rsa*
 analyzer/six*
+analyzer/urllib3*
 
 *.pyc
