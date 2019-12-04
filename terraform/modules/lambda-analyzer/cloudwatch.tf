@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 
 resource "aws_cloudwatch_event_rule" "lambda_function_trigger" {
   name                = "${var.function_name}-${var.environment}-trigger"
-  schedule_expression = "cron(0 0 * * ? *)"
+  schedule_expression = "rate(1 hour)"
   depends_on          = [aws_lambda_function.lambda_function]
 }
 
