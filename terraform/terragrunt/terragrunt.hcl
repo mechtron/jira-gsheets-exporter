@@ -2,7 +2,7 @@ remote_state {
   backend = "s3"
   config = {
     bucket  = "gumgum-terraform-state"
-    key     = "jira-sprint-analyzer/${path_relative_to_include()}/terraform.tfstate"
+    key     = "jira-gsheets-exporter/${path_relative_to_include()}/terraform.tfstate"
     region  = "us-east-1"
     encrypt = true
 
@@ -34,5 +34,6 @@ terraform {
 
 inputs = {
   aws_region = "us-east-1"
-  credstash_table = "va-credstash-jira-sprint-analyzer"
+  credstash_table = "credstash"
+  jira_api_base_url = "gumgum.jira.com"
 }

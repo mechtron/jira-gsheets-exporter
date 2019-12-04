@@ -1,23 +1,23 @@
-# jira-sprint-analyzer
+# jira-gsheets-exporter
 
 By Corey Gale (`mechtrondev[at]gmail.com`)
 
 ## Executive summary
 
-Syncs data for a particular Jira project to a Google Sheet for further analysis. Includes Terraform IaC to provision a AWS Lambda function that runs nightly to always keep your Google Sheet data up-to-date.
+Exports data for a particular Jira project to a Google Sheet for further analysis. Includes Terraform IaC to provision a AWS Lambda function that runs hourly to keep your Google Sheet data always up-to-date.
 
 ## Features
 
-1. Can anaylze a large number of Jira issues (10k+)
+1. Scalable: can easily process Jira projects with large issue counts (10k+)
 1. Updates Goolge Sheets very quickly (single API call)
-1. Includes AWS Lambda function with nightly triggers
+1. Includes AWS Lambda function with hourly CloudWatch Events trigger
 1. (coming soon) Email notifications via SES for failed executions
 
 ## AWS infrastructure
 
 #### Resources
 
-- Lambda function triggered by CloudWatch Events (fires nightly at UTC midnight)
+- Lambda function triggered by CloudWatch Events (fires hourly)
 - CloudWatch Log Stream for Lambda function output
 - SES for email notifications
 
@@ -27,7 +27,7 @@ All of the AWS resources provisioned by this project fit within [AWS's always-fr
 
 Just to be safe, to avoid bill shock I suggest that you set up a [billing alarm](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/monitor_estimated_charges_with_cloudwatch.html) for your AWS account.
 
-## Deploying `jira-sprint-analyzer` to your AWS account
+## Deploying `jira-gsheets-exporter` to your AWS account
 
 #### Dependencies
 

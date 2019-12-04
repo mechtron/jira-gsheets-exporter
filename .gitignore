@@ -1,20 +1,20 @@
 .terraform
 .terragrunt-cache
 
-analyzer/__pycache__
-analyzer/venv
-analyzer/bin
+exporter/__pycache__
+exporter/venv
+exporter/bin
 
-analyzer/certifi*
-analyzer/chardet*
-analyzer/gspread*
-analyzer/httplib2*
-analyzer/idna*
-analyzer/oauth2client*
-analyzer/pyasn1*
-analyzer/requests*
-analyzer/rsa*
-analyzer/six*
-analyzer/urllib3*
+exporter/certifi*
+exporter/chardet*
+exporter/gspread*
+exporter/httplib2*
+exporter/idna*
+exporter/oauth2client*
+exporter/pyasn1*
+exporter/requests*
+exporter/rsa*
+exporter/six*
+exporter/urllib3*
 
 *.pyc

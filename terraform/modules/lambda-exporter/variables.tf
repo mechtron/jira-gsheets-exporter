@@ -12,7 +12,11 @@ variable "environment" {
 
 variable "function_name" {
   description = "The Lambda function's name"
-  default     = "jira-sprint-analyzer"
+  default     = "jira-gsheets-exporter"
+}
+
+variable "jira_api_base_url" {
+  description = "The base URL of the target Jira API"
 }
 
 variable "ses_from_email" {

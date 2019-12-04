@@ -6,7 +6,8 @@ from urllib.request import Request, urlopen
 
 JIRA_API_EMAIL = os.environ.get("JIRA_API_EMAIL")
 JIRA_API_TOKEN = os.environ.get("JIRA_API_TOKEN")
-JIRA_API_PAGE_SIZE = int(os.environ.get("JIRA_ISSUES_TO_ANALYZE", 100))
+JIRA_API_BASE_URL = os.environ.get("JIRA_API_BASE_URL")
+JIRA_API_PAGE_SIZE = int(os.environ.get("JIRA_API_PAGE_SIZE", 100))
 JIRA_MAX_ISSUES_TO_FETCH = int(
     os.environ.get("JIRA_MAX_ISSUES_TO_FETCH", 1000)
 )
@@ -26,10 +27,11 @@ def get_project_issues(jira_project_id):
     total_issue_count = None
     while True:
         url = (
-            "https://gumgum.jira.com/rest/api/2/search?jql=project={id}"
+            "https://{base_url}/rest/api/2/search?jql=project={id}"
             "&maxResults={page_size}"
             "&startAt={start_at}"
         ).format(
+            base_url=JIRA_API_BASE_URL,
             id=jira_project_id,
             page_size=JIRA_API_PAGE_SIZE,
             start_at=page_number*JIRA_API_PAGE_SIZE,
