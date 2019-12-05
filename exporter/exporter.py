@@ -40,7 +40,9 @@ def update_jira_data(worksheet, issues):
         cell_list[i*column_count+1].value = issues[i]["fields"]["summary"]
         # Team
         if issues[i]["fields"]["customfield_13805"]:
-            cell_list[i*column_count+2].value = issues[i]["fields"]["customfield_13805"]["value"]
+            cell_list[i*column_count+2].value = (
+                issues[i]["fields"]["customfield_13805"]["value"]
+            )
         else:
             cell_list[i*column_count+2].value = ""
         # Type
@@ -48,7 +50,9 @@ def update_jira_data(worksheet, issues):
             "customfield_13919" in issues[i]["fields"] and
             issues[i]["fields"]["customfield_13919"]
         ):
-            cell_list[i*column_count+3].value = issues[i]["fields"]["customfield_13919"]["value"]
+            cell_list[i*column_count+3].value = (
+                issues[i]["fields"]["customfield_13919"]["value"]
+            )
         else:
             cell_list[i*column_count+3].value = ""
         # Story points
@@ -56,7 +60,9 @@ def update_jira_data(worksheet, issues):
             "customfield_10013" in issues[i]["fields"] and
             issues[i]["fields"]["customfield_10013"]
         ):
-            cell_list[i*column_count+4].value = issues[i]["fields"]["customfield_10013"]
+            cell_list[i*column_count+4].value = (
+                issues[i]["fields"]["customfield_10013"]
+            )
         else:
             cell_list[i*column_count+4].value = ""
         # Business value
@@ -64,30 +70,45 @@ def update_jira_data(worksheet, issues):
             "customfield_13920" in issues[i]["fields"] and
             issues[i]["fields"]["customfield_13920"]
         ):
-            cell_list[i*column_count+5].value = issues[i]["fields"]["customfield_13920"]["value"]
+            cell_list[i*column_count+5].value = (
+                issues[i]["fields"]["customfield_13920"]["value"]
+            )
         else:
             cell_list[i*column_count+5].value = ""
         # Status
-        cell_list[i*column_count+6].value = issues[i]["fields"]["status"]["statusCategory"]["name"]
+        cell_list[i*column_count+6].value = (
+            issues[i]["fields"]["status"]["statusCategory"]["name"]
+        )
         # Creator
-        cell_list[i*column_count+7].value = issues[i]["fields"]["creator"]["displayName"]
+        cell_list[i*column_count+7].value = (
+            issues[i]["fields"]["creator"]["displayName"]
+        )
         # Assignee
         if issues[i]["fields"]["assignee"]:
-            cell_list[i*column_count+8].value = issues[i]["fields"]["assignee"]["displayName"]
+            cell_list[i*column_count+8].value = (
+                issues[i]["fields"]["assignee"]["displayName"]
+            )
         else:
             cell_list[i*column_count+8].value = ""
         # Sprint
         cell_list[i*column_count+9].value = ""
         if issues[i]["fields"]["customfield_10560"]:
-            match = re.search(r"name=([A-Za-z0-9 _#-]*)", issues[i]["fields"]["customfield_10560"][0])
+            match = re.search(
+                r"name=([A-Za-z0-9 _#-]*)",
+                issues[i]["fields"]["customfield_10560"][0],
+            )
             if match:
                 cell_list[i*column_count+9].value = match.group(1)
         # Date created
         cell_list[i*column_count+10].value = issues[i]["fields"]["created"]
         # Date last status change
-        cell_list[i*column_count+11].value = issues[i]["fields"]["statuscategorychangedate"]
+        cell_list[i*column_count+11].value = (
+            issues[i]["fields"]["statuscategorychangedate"]
+        )
         # Link
-        cell_list[i*column_count+12].value = "{base_url}/browse/{issue_id}".format(
+        cell_list[i*column_count+12].value = (
+            "{base_url}/browse/{issue_id}"
+        ).format(
             base_url=issues[i]["self"].split("/rest")[0],
             issue_id=issues[i]["key"],
         )
