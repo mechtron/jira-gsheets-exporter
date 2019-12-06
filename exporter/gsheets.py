@@ -17,8 +17,7 @@ def setup_gspread_worksheet():
         "https://www.googleapis.com/auth/spreadsheets",
     ]
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-        json.loads(GOOGLE_SERVICE_CREDS_JSON),
-        scopes=scope,
+        json.loads(GOOGLE_SERVICE_CREDS_JSON), scopes=scope,
     )
     gc = gspread.authorize(credentials)
     sh = gc.open(GOOGLE_SHEET_NAME)
@@ -31,7 +30,7 @@ def write_header_row(worksheet, column_names):
     column = 1
     for key in column_names:
         worksheet.update_cell(row, column, key)
-        column+=1
+        column += 1
 
 
 def append_row(worksheet, row):
