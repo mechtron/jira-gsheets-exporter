@@ -15,5 +15,6 @@ inputs = {
   google_sheet_name = "DevOps Team Sprint Analyzer"
   google_sheet_tab_name = "Data"
   jira_project_name = "OPS"
+  jira_max_issues_to_fetch = 1500
   ses_from_email = "mechtrondev@gmail.com"
 }
