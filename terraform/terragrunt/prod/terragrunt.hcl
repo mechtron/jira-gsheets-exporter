@@ -13,7 +13,7 @@ include {
 inputs = {
   environment = "prod"
   google_sheet_name = "DevOps Team Sprint Analyzer"
-  google_sheet_tab_name = "Data"
+  google_sheet_tab_name = "Jira Data"
   jira_project_name = "OPS"
   jira_max_issues_to_fetch = 1500
   ses_from_email = "mechtrondev@gmail.com"
