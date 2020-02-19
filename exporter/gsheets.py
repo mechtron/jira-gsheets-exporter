@@ -34,11 +34,11 @@ def write_header_row(worksheet, column_names):
 
 
 def append_row(worksheet, row):
-    worksheet.append_row(row)
+    worksheet.append_row(row, value_input_option='USER_ENTERED')
 
 
 def insert_row(worksheet, row, row_number):
-    worksheet.insert_row(row, row_number)
+    worksheet.insert_row(row, row_number, value_input_option='USER_ENTERED')
 
 
 def update_cell(worksheet, column, row, new_value):

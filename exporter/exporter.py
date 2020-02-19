@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import datetime
 import os
 import re
 import string
@@ -35,6 +36,14 @@ def build_range(row_number, column_count, row_count):
     return "A{0}:{1}{2}".format(
         row_number, string.ascii_uppercase[column_count - 1], row_count,
     )
+
+
+def print_date_google_sheets(jira_date_string):
+    datetime_parsed = datetime.datetime.strptime(
+        jira_date_string,
+        "%Y-%m-%dT%H:%M:%S.%f%z",
+    )
+    return datetime_parsed.strftime("%m/%d/%Y %H:%M:%S")
 
 
 def update_jira_data(worksheet, issues):
@@ -108,18 +117,20 @@ def update_jira_data(worksheet, issues):
             if match:
                 cell_list[i * column_count + 9].value = match.group(1)
         # Date created
-        cell_list[i * column_count + 10].value = issues[i]["fields"]["created"]
+        cell_list[i * column_count + 10].value = print_date_google_sheets(
+            issues[i]["fields"]["created"]
+        )
         # Date last status change
-        cell_list[i * column_count + 11].value = issues[i]["fields"][
-            "statuscategorychangedate"
-        ]
+        cell_list[i * column_count + 11].value = print_date_google_sheets(
+            issues[i]["fields"]["statuscategorychangedate"]
+        )
         # Link
         cell_list[i * column_count + 12].value = (
             "{base_url}/browse/{issue_id}"
         ).format(
             base_url=issues[i]["self"].split("/rest")[0], issue_id=issues[i]["key"],
         )
-    worksheet.update_cells(cell_list)
+    worksheet.update_cells(cell_list, value_input_option='USER_ENTERED')
 
 
 def main():
