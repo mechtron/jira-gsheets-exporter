@@ -18,6 +18,7 @@ HEADER_ROW_COLUMNS = [
     "Issue",
     "Summary",
     "Team",
+    "Issue Type",
     "Type",
     "Story Points",
     "Business Value",
@@ -40,8 +41,7 @@ def build_range(row_number, column_count, row_count):
 
 def print_date_google_sheets(jira_date_string):
     datetime_parsed = datetime.datetime.strptime(
-        jira_date_string,
-        "%Y-%m-%dT%H:%M:%S.%f%z",
+        jira_date_string, "%Y-%m-%dT%H:%M:%S.%f%z",
     )
     return datetime_parsed.strftime("%m/%d/%Y %H:%M:%S")
 
@@ -63,74 +63,80 @@ def update_jira_data(worksheet, issues):
             ]["value"]
         else:
             cell_list[i * column_count + 2].value = ""
+        # Issue Type
+        cell_list[i * column_count + 3].value = issues[i]["fields"][
+            "issuetype"
+        ]["name"]
         # Type
         if (
             "customfield_13919" in issues[i]["fields"]
             and issues[i]["fields"]["customfield_13919"]
         ):
-            cell_list[i * column_count + 3].value = issues[i]["fields"][
+            cell_list[i * column_count + 4].value = issues[i]["fields"][
                 "customfield_13919"
             ]["value"]
         else:
-            cell_list[i * column_count + 3].value = ""
+            cell_list[i * column_count + 4].value = ""
         # Story points
         if (
             "customfield_10013" in issues[i]["fields"]
             and issues[i]["fields"]["customfield_10013"]
         ):
-            cell_list[i * column_count + 4].value = issues[i]["fields"][
+            cell_list[i * column_count + 5].value = issues[i]["fields"][
                 "customfield_10013"
             ]
         else:
-            cell_list[i * column_count + 4].value = ""
+            cell_list[i * column_count + 5].value = ""
         # Business value
         if (
             "customfield_13920" in issues[i]["fields"]
             and issues[i]["fields"]["customfield_13920"]
         ):
-            cell_list[i * column_count + 5].value = issues[i]["fields"][
+            cell_list[i * column_count + 6].value = issues[i]["fields"][
                 "customfield_13920"
             ]["value"]
         else:
-            cell_list[i * column_count + 5].value = ""
+            cell_list[i * column_count + 6].value = ""
         # Status
-        cell_list[i * column_count + 6].value = issues[i]["fields"]["status"][
+        cell_list[i * column_count + 7].value = issues[i]["fields"]["status"][
             "statusCategory"
         ]["name"]
         # Creator
-        cell_list[i * column_count + 7].value = issues[i]["fields"]["creator"][
+        cell_list[i * column_count + 8].value = issues[i]["fields"]["creator"][
             "displayName"
         ]
         # Assignee
         if issues[i]["fields"]["assignee"]:
-            cell_list[i * column_count + 8].value = issues[i]["fields"]["assignee"][
-                "displayName"
-            ]
+            cell_list[i * column_count + 9].value = issues[i]["fields"][
+                "assignee"
+            ]["displayName"]
         else:
-            cell_list[i * column_count + 8].value = ""
+            cell_list[i * column_count + 9].value = ""
         # Sprint
-        cell_list[i * column_count + 9].value = ""
+        cell_list[i * column_count + 10].value = ""
         if issues[i]["fields"]["customfield_10560"]:
             match = re.search(
-                r"name=([A-Za-z0-9 _#-]*)", issues[i]["fields"]["customfield_10560"][0],
+                r"name=([A-Za-z0-9 _#-]*)",
+                issues[i]["fields"]["customfield_10560"][0],
             )
             if match:
-                cell_list[i * column_count + 9].value = match.group(1)
+                cell_list[i * column_count + 10].value = match.group(1)
         # Date created
-        cell_list[i * column_count + 10].value = print_date_google_sheets(
+        cell_list[i * column_count + 11].value = print_date_google_sheets(
             issues[i]["fields"]["created"]
         )
         # Date last status change
-        cell_list[i * column_count + 11].value = print_date_google_sheets(
+        cell_list[i * column_count + 12].value = print_date_google_sheets(
             issues[i]["fields"]["statuscategorychangedate"]
         )
         # Link
-        cell_list[i * column_count + 12].value = (
+        cell_list[i * column_count + 13].value = (
             "{base_url}/browse/{issue_id}"
         ).format(
-            base_url=issues[i]["self"].split("/rest")[0], issue_id=issues[i]["key"],
+            base_url=issues[i]["self"].split("/rest")[0],
+            issue_id=issues[i]["key"],
         )
-    worksheet.update_cells(cell_list, value_input_option='USER_ENTERED')
+    worksheet.update_cells(cell_list, value_input_option="USER_ENTERED")
 
 
 def main():
