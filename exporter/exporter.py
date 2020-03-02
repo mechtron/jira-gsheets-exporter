@@ -22,7 +22,7 @@ def build_range(row_number, column_count, row_count):
     )
 
 
-def print_date_google_sheets(jira_date_string):
+def convert_to_gsheets_friendly_date(jira_date_string):
     datetime_parsed = datetime.datetime.strptime(
         jira_date_string, "%Y-%m-%dT%H:%M:%S.%f%z",
     )
@@ -35,90 +35,62 @@ def update_jira_data(config, worksheet, issues):
     cell_range = build_range(2, column_count, len(issues))
     cell_list = worksheet.range(cell_range)
     for i in range(0, len(issues) - 1):
-        # Issue key
-        cell_list[i * column_count].value = issues[i]["key"]
-        # Issue title
-        cell_list[i * column_count + 1].value = issues[i]["fields"]["summary"]
-        # Team
-        if issues[i]["fields"]["customfield_13805"]:
-            cell_list[i * column_count + 2].value = issues[i]["fields"][
-                "customfield_13805"
-            ]["value"]
-        else:
-            cell_list[i * column_count + 2].value = ""
-        # Issue Type
-        cell_list[i * column_count + 3].value = issues[i]["fields"][
-            "issuetype"
-        ]["name"]
-        # Type
-        if (
-            "customfield_13919" in issues[i]["fields"]
-            and issues[i]["fields"]["customfield_13919"]
-        ):
-            cell_list[i * column_count + 4].value = issues[i]["fields"][
-                "customfield_13919"
-            ]["value"]
-        else:
-            cell_list[i * column_count + 4].value = ""
-        # Story points
-        if (
-            "customfield_10013" in issues[i]["fields"]
-            and issues[i]["fields"]["customfield_10013"]
-        ):
-            cell_list[i * column_count + 5].value = issues[i]["fields"][
-                "customfield_10013"
-            ]
-        else:
-            cell_list[i * column_count + 5].value = ""
-        # Business value
-        if (
-            "customfield_13920" in issues[i]["fields"]
-            and issues[i]["fields"]["customfield_13920"]
-        ):
-            cell_list[i * column_count + 6].value = issues[i]["fields"][
-                "customfield_13920"
-            ]["value"]
-        else:
-            cell_list[i * column_count + 6].value = ""
-        # Status
-        cell_list[i * column_count + 7].value = issues[i]["fields"]["status"][
-            "statusCategory"
-        ]["name"]
-        # Creator
-        cell_list[i * column_count + 8].value = issues[i]["fields"]["creator"][
-            "displayName"
-        ]
-        # Assignee
-        if issues[i]["fields"]["assignee"]:
-            cell_list[i * column_count + 9].value = issues[i]["fields"][
-                "assignee"
-            ]["displayName"]
-        else:
-            cell_list[i * column_count + 9].value = ""
-        # Sprint
-        cell_list[i * column_count + 10].value = ""
-        if issues[i]["fields"]["customfield_10560"]:
-            match = re.search(
-                r"name=([A-Za-z0-9 _#-]*)",
-                issues[i]["fields"]["customfield_10560"][0],
-            )
-            if match:
-                cell_list[i * column_count + 10].value = match.group(1)
-        # Date created
-        cell_list[i * column_count + 11].value = print_date_google_sheets(
-            issues[i]["fields"]["created"]
-        )
-        # Date last status change
-        cell_list[i * column_count + 12].value = print_date_google_sheets(
-            issues[i]["fields"]["statuscategorychangedate"]
-        )
-        # Link
-        cell_list[i * column_count + 13].value = (
-            "{base_url}/browse/{issue_id}"
-        ).format(
-            base_url=issues[i]["self"].split("/rest")[0],
-            issue_id=issues[i]["key"],
-        )
+        current_column = 0
+        for column in config["report_columns"]:
+            value = ""
+            if column["type"] == "key":
+                value = issues[i][column["key"]]
+
+            elif column["type"] == "field":
+                # Custom field support:
+                if "customfield_" in column["field_name"]:
+                    if (
+                        column["field_name"] in issues[i]["fields"]
+                        and issues[i]["fields"][column["field_name"]]
+                    ):
+                        value = issues[i]["fields"][column["field_name"]]
+                        if hasattr(value, "__contains__") and "value" in value:
+                            value = value["value"]
+                # Nested key support:
+                elif "." in column["field_name"]:
+                    keys = column["field_name"].split(".")
+                    value = issues[i]["fields"][keys[0]]
+                    if value:
+                        for key in keys[1:]:
+                            value = value[key]
+                else:
+                    value = issues[i]["fields"][column["field_name"]]
+
+            elif column["type"] == "issue_link":
+                value = "{base_url}/browse/{issue_id}".format(
+                    base_url=issues[i]["self"].split("/rest")[0],
+                    issue_id=issues[i]["key"],
+                )
+
+            # Feature: Regex capture
+            if "regex_capture" in column and value != "":
+                if isinstance(value, list):
+                    value = value[0]
+                match = re.search(
+                    r"{}".format(column["regex_capture"]), value,
+                )
+                if match:
+                    value = match.group(1)
+
+            # Feature: Date formatter
+            if "date_formatter" in column and value != "":
+                if column["date_formatter"] == "google_sheets":
+                    value = convert_to_gsheets_friendly_date(value)
+                else:
+                    exit(
+                        "Unknown date_formatter {}".format(
+                            column["date_formatter"]
+                        )
+                    )
+
+            cell_list[i * column_count + current_column].value = value
+            current_column += 1
+
     worksheet.update_cells(cell_list, value_input_option="USER_ENTERED")
 
 
