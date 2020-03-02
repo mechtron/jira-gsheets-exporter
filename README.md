@@ -9,6 +9,7 @@ Exports data for a particular Jira project to a Google Sheet for further analysi
 ## Features
 
 1. Scalable: can easily process Jira projects with large issue counts (10k+)
+1. Easy configuration: write a few lines of yaml to export your Jira project's custom data shape
 1. Updates Google Sheets very quickly (single API call)
 1. Includes AWS Lambda function with hourly CloudWatch Events trigger
 1. (coming soon) Email notifications via SES for failed executions
@@ -59,32 +60,43 @@ All of the AWS resources provisioned by this project fit within [AWS's always-fr
 
 1. Update the shared Terragrunt values in `terraform/terragrunt/terragrunt.hcl` to match your AWS account's configuration.
 1. Open/create the target Google Sheets spreadsheet and share it with the email contained in the Google auth JSON (under `client_email`). Make sure the user has "Can edit" permissions.
-1. Update the `prod` environment's Terragrunt values in `terraform/terragrunt/prod/terragrunt.hcl`:
-	1. `google_sheet_name` is the name of the Google Sheet from the previous step
-	1. `google_sheet_tab_name` is the name of the tab/worksheet within the Google sheet to sync data to
-	1. `jira_project_name` is the project key of the Jira project to fetch issues for
-1. Open `exporter/exporter.py` and update the Python mapping logic within `update_jira_data()`
-1. Deploy the `prod` environment (using the Terragrunt variables stored in `terraform/terragrunt/prod/terragrunt.hcl`):
+1. Pick a name for your environment (example: "API", "dev", "QA")
+1. Copy the `example` environment's Terragrunt values from `terraform/terragrunt/example/terragrunt.hcl` to `terraform/terragrunt/<your_environment_name>/terragrunt.hcl` and update the following values:
+	1. `environment` is the name of your environment 
+	1. `ses_from_email` is the address you wish to send failure notification emails from.
+1. Copy the `example` environment's config yaml from `config/example.yml` to `config/<your_environment_name>.yml` and update the values to define the shape of your report:
 
-		ENV=prod TF_ACTION=apply make terragrunt
+	| Parameter | Description | Allowed values | Additional required fields |
+	| :----: | :----: | :----: | :----: |
+	| `jira.base_url` | Your Jira project's base URL. Example: `your-company.jira.com` | `String` |  |
+	| `jira.project_name` | The project key of the Jira project to fetch issues for | `String` |  |
+	| `jira.max_issues_to_fetch` | Max Jira project issues to fetch | `Integer` |  |
+	| `google_sheets.sheet_name` | Name of the Google Sheet from the previous step | `String` |  |
+	| `google_sheets.tab_name` | Name of the tab within the Google sheet to sync data to | `String` |  |
+	| `report_columns[].column_name` | Name of the Google Sheet column | `String` |  |
+	| `report_columns[].type` | The type of Jira issue data to export | `key`, `field` or ` issue_link` | If `type=key`: `key`,  if `type=field`: `field_name` |
+	| `report_columns[].regex_capture` | Advanced: select a sub-string of a field's value | Regex `String` with capture group |  |
+	| `report_columns[].date_formatter` | Advanced: convert a selected field's value to a Google-sheet friendly date format | `google_sheets` |  |
+
+1. Deploy your environment (using the Terragrunt variables stored in `terraform/terragrunt/<your_environment_name>/terragrunt.hcl`):
+
+		ENV=<your_environment_name> TF_ACTION=apply make terragrunt
 
 ### Destroy
 
 To destroy an environment (in this case `prod`), set the `TF_ACTION` environment variable to `destroy`:
 
-	ENV=prod TF_ACTION=destroy make terragrunt
+	ENV=<your_environment_name> TF_ACTION=destroy make terragrunt
 
 ### Creating new environments
 
 Creating new environments is as easy as creating a new Terragrunt environment folder:
 
-1. Copy `terraform/terragrunt/prod/terragrunt.hcl` to a new sub-directory under `terraform/terragrunt/`. The name that you choose for this directory will be your new environment's name.
+1. Copy `terraform/terragrunt/<your_environment_name>/terragrunt.hcl` to a new sub-directory under `terraform/terragrunt/`. The name that you choose for this directory will be your new environment's name.
 1. Update the environment's name in the newly copied `terragrunt.hcl` file under the `inputs` section near the end of the file.
 1. Deploy your environment with `make`:
 
-		ENV=<ENV> TF_ACTION=apply make terragrunt
-
-	Where `<ENV>` is your new environment's name
+		ENV=<your_environment_name> TF_ACTION=apply make terragrunt
 
 ## To do
 
