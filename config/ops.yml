@@ -53,4 +53,3 @@
       date_formatter: google_sheets
     - column_name: Link
       type: issue_link
-  
