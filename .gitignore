@@ -12,9 +12,13 @@ exporter/httplib2*
 exporter/idna*
 exporter/oauth2client*
 exporter/pyasn1*
+exporter/PyYAML*
 exporter/requests*
 exporter/rsa*
 exporter/six*
 exporter/urllib3*
+exporter/yaml/
+
+exporter/config.yml
 
 *.pyc

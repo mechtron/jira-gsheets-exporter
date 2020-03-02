@@ -6,14 +6,12 @@ from urllib.request import Request, urlopen
 
 JIRA_API_EMAIL = os.environ.get("JIRA_API_EMAIL")
 JIRA_API_TOKEN = os.environ.get("JIRA_API_TOKEN")
-JIRA_API_BASE_URL = os.environ.get("JIRA_API_BASE_URL")
 JIRA_API_PAGE_SIZE = int(os.environ.get("JIRA_API_PAGE_SIZE", 100))
-JIRA_MAX_ISSUES_TO_FETCH = int(
-    os.environ.get("JIRA_MAX_ISSUES_TO_FETCH", 1000)
-)
 
 
-def get_project_issues(jira_project_id):
+def get_project_issues(
+    jira_project_id, jira_api_base_url, jira_api_max_issues,
+):
     print("Looking up project issues for {}".format(jira_project_id))
     jira_auth = "{api_email}:{api_token}".format(
         api_email=JIRA_API_EMAIL, api_token=JIRA_API_TOKEN
@@ -31,7 +29,7 @@ def get_project_issues(jira_project_id):
             "&maxResults={page_size}"
             "&startAt={start_at}"
         ).format(
-            base_url=JIRA_API_BASE_URL,
+            base_url=jira_api_base_url,
             id=jira_project_id,
             page_size=JIRA_API_PAGE_SIZE,
             start_at=page_number * JIRA_API_PAGE_SIZE,
@@ -42,10 +40,10 @@ def get_project_issues(jira_project_id):
         if not total_issue_count:
             total_issue_count = response_dict["total"]
         all_issues.extend(response_dict["issues"])
-        if (page_number + 1) * JIRA_API_PAGE_SIZE >= JIRA_MAX_ISSUES_TO_FETCH:
+        if (page_number + 1) * JIRA_API_PAGE_SIZE >= jira_api_max_issues:
             print(
                 "First {} issues successfully fetched".format(
-                    JIRA_MAX_ISSUES_TO_FETCH,
+                    jira_api_max_issues,
                 )
             )
             break
