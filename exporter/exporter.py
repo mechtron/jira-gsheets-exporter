@@ -2,9 +2,11 @@
 
 import datetime
 import os
+from pathlib import Path
 import re
 import string
 import time
+import yaml
 
 from gsheets import (
     insert_row,
@@ -12,25 +14,6 @@ from gsheets import (
     write_header_row,
 )
 from jira import get_project_issues
-
-
-HEADER_ROW_COLUMNS = [
-    "Issue",
-    "Summary",
-    "Team",
-    "Issue Type",
-    "Type",
-    "Story Points",
-    "Business Value",
-    "Status",
-    "Creator",
-    "Assignee",
-    "Sprint",
-    "Date Created",
-    "Date Last Status Change",
-    "Link",
-]
-JIRA_PROJECT_NAME = os.environ.get("JIRA_PROJECT_NAME")
 
 
 def build_range(row_number, column_count, row_count):
@@ -46,9 +29,9 @@ def print_date_google_sheets(jira_date_string):
     return datetime_parsed.strftime("%m/%d/%Y %H:%M:%S")
 
 
-def update_jira_data(worksheet, issues):
+def update_jira_data(config, worksheet, issues):
     print("Updating Jira data..")
-    column_count = len(HEADER_ROW_COLUMNS)
+    column_count = len(config["report_columns"])
     cell_range = build_range(2, column_count, len(issues))
     cell_list = worksheet.range(cell_range)
     for i in range(0, len(issues) - 1):
@@ -139,11 +122,25 @@ def update_jira_data(worksheet, issues):
     worksheet.update_cells(cell_list, value_input_option="USER_ENTERED")
 
 
+def load_config():
+    config_path = "{}/config.yml".format(Path(__file__).parent.absolute())
+    with open(config_path, "r") as stream:
+        return yaml.safe_load(stream)
+
+
 def main():
-    issues = get_project_issues(JIRA_PROJECT_NAME)
-    worksheet = setup_gspread_worksheet()
-    write_header_row(worksheet, HEADER_ROW_COLUMNS)
-    update_jira_data(worksheet, issues)
+    config = load_config()
+    issues = get_project_issues(
+        config["jira"]["project_name"],
+        config["jira"]["base_url"],
+        config["jira"]["max_issues_to_fetch"],
+    )
+    worksheet = setup_gspread_worksheet(
+        config["google_sheets"]["sheet_name"],
+        config["google_sheets"]["tab_name"],
+    )
+    write_header_row(worksheet, config["report_columns"])
+    update_jira_data(config, worksheet, issues)
 
 
 def handler(event, context):
