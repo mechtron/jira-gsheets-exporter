@@ -65,7 +65,7 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      uses: actions/hello-world-docker-action@0.1.0
+      uses: jira-gsheets-exporter/hello-world-docker-action@0.1.0
       with:
         who-to-greet: 'Mona the Octocat'
     # Use the output from the `hello` step
