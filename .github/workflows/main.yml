@@ -65,7 +65,7 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      uses: jira-gsheets-exporter/hello-world-docker-action@github-actions
+      uses: mechtron/jira-gsheets-exporter/hello-world-docker-action@github-actions
     #   uses: ./
       with:
         who-to-greet: 'Mona the Octocat'
