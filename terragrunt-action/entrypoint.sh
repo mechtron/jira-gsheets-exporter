@@ -15,19 +15,17 @@ export TF_VAR_jira_api_token=$JIRA_API_TOKEN
 cd $GITHUB_WORKSPACE/terraform/terragrunt/$1
 terragrunt $2 --terragrunt-source-update --auto-approve=true
 
-# Grab Terraform export vars
-export FUNCTION_ARN=`terragrunt output lambda_arn`
-export SOURCE_CODE_HASH=`terragrunt output lambda_source_code_hash`
-export LAST_MODIFIED=`terragrunt output lambda_last_modified`
-
-echo "2 is"
-echo $2
-
-# Set Action output vars
+# Conditionally set Terragrunt exports as Action outputs
 if [[ $2 = "destroy" ]]
 then
     echo "Stack destroyed - no output variables to print"
 else
+    # Grab Terraform export vars
+    export FUNCTION_ARN=`terragrunt output lambda_arn`
+    export SOURCE_CODE_HASH=`terragrunt output lambda_source_code_hash`
+    export LAST_MODIFIED=`terragrunt output lambda_last_modified`
+
+    # Set Action output vars
     echo ::set-output name=function_arn::$FUNCTION_ARN
     echo ::set-output name=source_code_hash::$SOURCE_CODE_HASH
     echo ::set-output name=last_modified::$LAST_MODIFIED
