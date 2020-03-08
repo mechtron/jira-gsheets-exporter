@@ -12,6 +12,7 @@ Exports data for a particular Jira project to a Google Sheet for further analysi
 1. Easy configuration: write a few lines of yaml to export your Jira project's custom data shape
 1. Updates Google Sheets very quickly (single API call)
 1. Includes AWS Lambda function with hourly CloudWatch Events trigger
+1. Built-in GitHub Actions deployment pipeline
 1. (coming soon) Email notifications via SES for failed executions
 
 ## AWS infrastructure

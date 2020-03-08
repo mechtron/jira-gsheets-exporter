@@ -6,7 +6,7 @@ inputs:
     required: true
     default: example
   tf_action:
-    description: apply or destroy?
+    description: Terraform apply or destroy?
     required: true
     default: apply
 outputs:
