@@ -5,7 +5,7 @@ if [[ $GITHUB_REF = "refs/heads/master" ]]
 then
     export ENV="ops"
 else
-    export ENV="example"
+    export ENV="test"
 fi
 
 # Set Action output vars
