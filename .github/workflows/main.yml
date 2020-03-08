@@ -1,7 +1,7 @@
 name: Deploy jira-gsheets-exporter to AWS Lambda
 on: [push]
 jobs:
-  terragrunt_job:
+  build_and_deploy_job:
     name: Build and deploy
     runs-on: ubuntu-18.04
     steps:
