@@ -1,10 +1,12 @@
 #!/bin/sh -l
 
-echo $1 $2 $3
+echo $1 $2
 
-pip3 install -r exporter/requirements.txt -t exporter
+ls -laht /github/workspace/
 
-export TF_VAR_repo_root_path=$(shell pwd) && \
-	cp config/$ENV.yml exporter/config.yml && \
-	cd terraform/terragrunt/$ENV && \
-	terragrunt $TF_ACTION --terragrunt-source-update --auto-approve=true
+pip install -r /github/workspace/exporter/requirements.txt -t exporter
+
+export TF_VAR_repo_root_path=/github/workspace/ && \
+	cp /github/workspace/config/$1.yml /github/workspace/exporter/config.yml && \
+	cd /github/workspace/terraform/terragrunt/$1 && \
+	terragrunt $2 --terragrunt-source-update --auto-approve=true

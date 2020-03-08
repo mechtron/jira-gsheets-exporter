@@ -1,11 +1,14 @@
-# action.yml
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Deploy Terraform via Terragrunt'
+description: 'Built to deploy our custom lambda-exporter module'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  env:
+    description: 'The name of the Terragrunt environment'
     required: true
-    default: 'World'
+    default: 'example'
+  tf_action:
+    description: 'apply or destroy?'
+    required: true
+    default: 'apply'
 outputs:
   time: # id of output
     description: 'The time we greeted you'
@@ -13,4 +16,5 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.who-to-greet }}
+    - ${{ inputs.env }}
+    - ${{ inputs.tf_action }}
