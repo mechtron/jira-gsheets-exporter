@@ -1,9 +1,9 @@
 #!/bin/sh -l
 
-# Copy app config.yml
+# Copy app environment config.yml
 cp $GITHUB_WORKSPACE/config/$1.yml $GITHUB_WORKSPACE/exporter/config.yml
 
-# Set Terraform vars
+# Set Terraform input vars
 export TF_VAR_repo_root_path=$GITHUB_WORKSPACE
 export TF_VAR_google_service_creds_json=$GOOGLE_SERVICE_CREDS_JSON
 export TF_VAR_jira_api_email=$JIRA_API_EMAIL
@@ -12,7 +12,9 @@ export TF_VAR_jira_api_token=$JIRA_API_TOKEN
 # Run Terragrunt
 cd $GITHUB_WORKSPACE/terraform/terragrunt/$1
 terragrunt $2 --terragrunt-source-update --auto-approve=true
+
+# Grab Terraform export vars
 export SOURCE_CODE_HASH=`terragrunt output lambda_source_code_hash`
 
-# Set Action output
+# Set Action output vars
 echo ::set-output name=source_code_hash::$SOURCE_CODE_HASH
