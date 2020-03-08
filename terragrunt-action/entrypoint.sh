@@ -20,6 +20,9 @@ export FUNCTION_ARN=`terragrunt output lambda_arn`
 export SOURCE_CODE_HASH=`terragrunt output lambda_source_code_hash`
 export LAST_MODIFIED=`terragrunt output lambda_last_modified`
 
+echo "2 is"
+echo $2
+
 # Set Action output vars
 if [[ $2 = "destroy" ]]
 then
