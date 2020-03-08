@@ -72,11 +72,12 @@ jobs:
 #     - name: Get the output time
 #       run: echo "The time was ${{ steps.hello.outputs.time }}"
   terragrunt_job:
-    runs-on: ubuntu-18.04
     name: Terragrunt
+    runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v2
-    - name: Terragrunt apply/destroy step
+    - name: Checkout this repo
+      uses: actions/checkout@v2
+    - name: Run Terragrunt step
       id: terragrunt_apply
       uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
       with:
