@@ -22,9 +22,8 @@ jobs:
       id: run_terragrunt
       uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
       with:
-        env: example
-        # env: ${{ steps.set_env.outputs.env }}
-        action: destroy
+        env: ${{ steps.set_env.outputs.env }}
+        tf_action: destroy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

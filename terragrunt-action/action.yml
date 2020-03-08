@@ -4,18 +4,19 @@ inputs:
   env:
     description: The name of the Terragrunt environment
     required: true
-    # default: example
   tf_action:
     description: Terraform apply or destroy?
     required: true
-    # default: apply
 outputs:
   function_arn:
     description: The Lambda function's ARN
+    default: ''
   source_code_hash:
     description: The Lambda-generated hash of the function's source code
+    default: ''
   last_modified:
     description: The Lambda function's source code last modified date
+    default: ''
 runs:
   using: docker
   image: Dockerfile
