@@ -75,6 +75,7 @@ jobs:
     runs-on: ubuntu-18.04
     name: Terragrunt
     steps:
+    - uses: actions/checkout@v2
     - name: Terragrunt apply/destroy step
       id: terragrunt_apply
       uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
