@@ -1,8 +1,9 @@
 #!/bin/sh -l
 
-ls -laht $GITHUB_WORKSPACE
-
 pip install -r $GITHUB_WORKSPACE/exporter/requirements.txt -t exporter
+
+aws sts get-caller-identity
+aws s3 ls
 
 export TF_VAR_repo_root_path=$GITHUB_WORKSPACE/ && \
 	cp $GITHUB_WORKSPACE/config/$1.yml $GITHUB_WORKSPACE/exporter/config.yml && \

@@ -85,9 +85,6 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   services:
-    #     volumes:
-    #       - '/github/workspace/'
     # Use the output from the `hello` step
     # - name: Get the output time
     #   run: echo "The time was ${{ steps.hello.outputs.time }}"
