@@ -3,9 +3,9 @@
 # Set ENV
 if [[ $GITHUB_REF = "refs/heads/master" ]]
 then
-    export ENV="prod"
+    export ENV="ops"
 else
-    export ENV="test"
+    export ENV="example"
 fi
 
 # Set Action output vars
