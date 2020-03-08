@@ -73,20 +73,20 @@ jobs:
 #     - name: Get the output time
 #       run: echo "The time was ${{ steps.hello.outputs.time }}"
   terragrunt_job:
-    name: Build & Deploy
+    name: 'Build & Deploy'
     runs-on: ubuntu-18.04
     steps:
-    - name: Checkout this repo
+    - name: 'Checkout this repo'
       uses: actions/checkout@v2
-    - name: Setup Python
+    - name: 'Setup Python'
       uses: actions/setup-python@v1
       with:
         python-version: 3.6
-    - name: Install Python dependencies
+    - name: 'Install Python dependencies'
       run: |
         python -m pip install --upgrade pip
         pip install -r $GITHUB_WORKSPACE/exporter/requirements.txt -t $GITHUB_WORKSPACE/exporter
-    - name: Run Terragrunt
+    - name: 'Run Terragrunt'
       id: run_terragrunt
       uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
       with:
@@ -98,5 +98,5 @@ jobs:
         GOOGLE_SERVICE_CREDS_JSON: ${{ secrets.GOOGLE_SERVICE_CREDS_JSON }}
         JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
         JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-    - name: Get the Terragrunt output
+    - name: 'Get the Terragrunt output'
       run: echo "The Lambda source hash is ${{ steps.run_terragrunt.outputs.source_code_hash }}"
