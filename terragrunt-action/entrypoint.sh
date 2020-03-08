@@ -1,5 +1,7 @@
 #!/bin/sh -l
 
+set -e
+
 # Copy app environment config.yml
 cp $GITHUB_WORKSPACE/config/$1.yml $GITHUB_WORKSPACE/exporter/config.yml
 
