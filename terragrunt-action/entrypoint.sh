@@ -2,6 +2,7 @@
 
 # Install app dependencies
 pip install -r $GITHUB_WORKSPACE/exporter/requirements.txt -t $GITHUB_WORKSPACE/exporter
+chmod +x $GITHUB_WORKSPACE/exporter/exporter.py
 
 # Copy app config.yml
 cp $GITHUB_WORKSPACE/config/$1.yml $GITHUB_WORKSPACE/exporter/config.yml
