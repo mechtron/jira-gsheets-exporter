@@ -56,19 +56,31 @@
 #           tf_actions_comment: false
 #         env:
 #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-on: [push]
 
+on: [push]
 jobs:
-  hello_world_job:
-    runs-on: ubuntu-latest
-    name: A job to say hello
+#   hello_world_job:
+#     runs-on: ubuntu-latest
+#     name: A job to say hello
+#     steps:
+#     - name: Hello world action step
+#       id: hello
+#       uses: mechtron/jira-gsheets-exporter/hello-world-docker-action@github-actions
+#       with:
+#         who-to-greet: 'Mona the Octocat'
+#     # Use the output from the `hello` step
+#     - name: Get the output time
+#       run: echo "The time was ${{ steps.hello.outputs.time }}"
+  terragrunt_job:
+    runs-on: ubuntu-18.04
+    name: Terragrunt
     steps:
-    - name: Hello world action step
-      id: hello
-      uses: mechtron/jira-gsheets-exporter/hello-world-docker-action@github-actions
-    #   uses: ./
+    - name: Terragrunt apply/destroy step
+      id: terragrunt_apply
+      uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
       with:
-        who-to-greet: 'Mona the Octocat'
+        env: 'example'
+        action: 'apply'
     # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.hello.outputs.time }}"
+    # - name: Get the output time
+    #   run: echo "The time was ${{ steps.hello.outputs.time }}"
