@@ -57,6 +57,7 @@
 #         env:
 #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+name: Deploy jira-gsheets-exporter to AWS Lambda
 on: [push]
 jobs:
 #   hello_world_job:
@@ -77,12 +78,20 @@ jobs:
     steps:
     - name: Checkout this repo
       uses: actions/checkout@v2
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.6
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r $GITHUB_WORKSPACE/exporter/requirements.txt -t $GITHUB_WORKSPACE/exporter
     - name: Run Terragrunt step
       id: terragrunt_apply
       uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
       with:
-        env: 'example'
-        action: 'apply'
+        env: example
+        action: apply
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
