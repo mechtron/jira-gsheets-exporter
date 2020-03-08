@@ -1,5 +1,7 @@
 #!/bin/sh -l
 
+echo $GITHUB_WORKSPACE
+
 ls -laht /github/
 ls -laht /github/home/
 ls -laht /github/workflow/
