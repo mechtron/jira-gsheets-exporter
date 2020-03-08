@@ -2,10 +2,6 @@ variable "aws_region" {
   description = "The AWS region"
 }
 
-variable "credstash_table" {
-  description = "Credstash DynamoDB table name"
-}
-
 variable "environment" {
   description = "The service's environment"
 }
@@ -17,6 +13,18 @@ variable "function_name" {
 
 variable "repo_root_path" {
   description = "The hard path of this repository"
+}
+
+variable "google_service_creds_json" {
+  description = "Google service account credentials (JSON string)"
+}
+
+variable "jira_api_email" {
+  description = "The email associated with the Jira API token"
+}
+
+variable "jira_api_token" {
+  description = "Jira API token"
 }
 
 variable "ses_from_email" {

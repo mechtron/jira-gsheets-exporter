@@ -34,6 +34,4 @@ terraform {
 
 inputs = {
   aws_region = "us-east-1"
-  credstash_table = "credstash"
-  jira_api_base_url = "gumgum.jira.com"
 }

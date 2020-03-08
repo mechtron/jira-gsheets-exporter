@@ -20,9 +20,9 @@ resource "aws_lambda_function" "lambda_function" {
 
   environment {
     variables = {
-      GOOGLE_SERVICE_CREDS_JSON = data.credstash_secret.google_creds_json.value
-      JIRA_API_EMAIL            = data.credstash_secret.jira_api_email.value
-      JIRA_API_TOKEN            = data.credstash_secret.jira_api_token.value
+      GOOGLE_SERVICE_CREDS_JSON = var.google_service_creds_json
+      JIRA_API_EMAIL            = var.jira_api_email
+      JIRA_API_TOKEN            = var.jira_api_token
     }
   }
 
