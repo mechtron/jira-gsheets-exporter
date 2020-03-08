@@ -10,8 +10,12 @@ inputs:
     required: true
     default: apply
 outputs:
+  function_arn:
+    description: The Lambda function's ARN
   source_code_hash:
     description: The Lambda-generated hash of the function's source code
+  last_modified:
+    description: The Lambda function's source code last modified date
 runs:
   using: docker
   image: Dockerfile

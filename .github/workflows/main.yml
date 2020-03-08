@@ -27,5 +27,8 @@ jobs:
         GOOGLE_SERVICE_CREDS_JSON: ${{ secrets.GOOGLE_SERVICE_CREDS_JSON }}
         JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
         JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-    - name: Get the Terragrunt output
-      run: echo "The Lambda source hash is ${{ steps.run_terragrunt.outputs.source_code_hash }}"
+    - name: Get the Terragrunt outputs
+      run: |
+        echo "The Lambda function's ARN is ${{ steps.run_terragrunt.outputs.function_arn }}"
+        echo "The Lambda source hash is ${{ steps.run_terragrunt.outputs.source_code_hash }}"
+        echo "The Lambda function's source last modified is ${{ steps.run_terragrunt.outputs.last_modified }}"
