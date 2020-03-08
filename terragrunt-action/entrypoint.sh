@@ -3,7 +3,6 @@
 pip install -r $GITHUB_WORKSPACE/exporter/requirements.txt -t exporter
 
 aws sts get-caller-identity
-aws s3 ls
 
 echo $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
 
