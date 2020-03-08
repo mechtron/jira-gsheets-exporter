@@ -15,13 +15,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r $GITHUB_WORKSPACE/exporter/requirements.txt -t $GITHUB_WORKSPACE/exporter
+    - name: Set environment
+      id: set_env
+      uses: mechtron/jira-gsheets-exporter/set-env-action@github-actions
     - name: Run Terragrunt
       id: run_terragrunt
       uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
       # if: github.ref == 'refs/heads/master'
       with:
         # env: example
-        env: ${{ 'ops' if github.ref == 'refs/heads/master' else 'example' }}
+        # env: ${{ 'ops' if github.ref == 'refs/heads/master' else 'example' }}
+        env: ${{ steps.set_env.outputs.env }}
         action: apply
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
