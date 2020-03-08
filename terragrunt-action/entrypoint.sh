@@ -1,7 +1,7 @@
 #!/bin/sh -l
 
-echo $1 $2
-
+ls -laht /github/
+ls -laht /github/home/
 ls -laht /github/workspace/
 
 pip install -r /github/workspace/exporter/requirements.txt -t exporter
