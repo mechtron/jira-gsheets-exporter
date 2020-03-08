@@ -4,11 +4,11 @@ inputs:
   env:
     description: The name of the Terragrunt environment
     required: true
-    default: example
+    # default: example
   tf_action:
     description: Terraform apply or destroy?
     required: true
-    default: apply
+    # default: apply
 outputs:
   function_arn:
     description: The Lambda function's ARN
