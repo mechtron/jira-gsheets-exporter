@@ -10,8 +10,8 @@ inputs:
     required: true
     default: 'apply'
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  source_code_hash:
+    description: 'The Lambda-generated hash of the function's source code'
 runs:
   using: 'docker'
   image: 'Dockerfile'

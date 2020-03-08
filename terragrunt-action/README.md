@@ -10,9 +10,9 @@ This action prints "Hello World" or "Hello" + the name of a person to greet to t
 
 ## Outputs
 
-### `time`
+### `source_code_hash`
 
-The time we greeted you.
+The Lambda-generated hash of the function's source code
 
 ## Example usage
 

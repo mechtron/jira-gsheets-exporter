@@ -12,3 +12,7 @@ export TF_VAR_jira_api_token=$JIRA_API_TOKEN
 # Run Terragrunt
 cd $GITHUB_WORKSPACE/terraform/terragrunt/$1
 terragrunt $2 --terragrunt-source-update --auto-approve=true
+export SOURCE_CODE_HASH=`terragrunt output lambda_source_code_hash`
+
+# Set Action output
+echo ::set-output name=source_code_hash::$SOURCE_CODE_HASH
