@@ -1,4 +1,4 @@
-# name: 'Deploy Terraform via Terragrunt'
+name: Deploy Terraform via Terragrunt
 description: Built to deploy our custom lambda-exporter module
 inputs:
   env:
