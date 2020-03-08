@@ -2,6 +2,7 @@
 
 ls -laht /github/
 ls -laht /github/home/
+ls -laht /github/workflow/
 ls -laht /github/workspace/
 
 pip install -r /github/workspace/exporter/requirements.txt -t exporter

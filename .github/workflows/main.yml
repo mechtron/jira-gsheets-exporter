@@ -81,9 +81,6 @@ jobs:
       with:
         env: 'example'
         action: 'apply'
-      env:
-        ENV: example
-        TF_ACTION: apply
     # Use the output from the `hello` step
     # - name: Get the output time
     #   run: echo "The time was ${{ steps.hello.outputs.time }}"
