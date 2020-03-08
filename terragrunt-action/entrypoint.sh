@@ -19,6 +19,11 @@ export SOURCE_CODE_HASH=`terragrunt output lambda_source_code_hash`
 export LAST_MODIFIED=`terragrunt output lambda_last_modified`
 
 # Set Action output vars
-echo ::set-output name=function_arn::$FUNCTION_ARN
-echo ::set-output name=source_code_hash::$SOURCE_CODE_HASH
-echo ::set-output name=last_modified::$LAST_MODIFIED
+if [[ $2 = "destroy" ]]
+then
+    echo "Stack destroyed - no output variables to print"
+else
+    echo ::set-output name=function_arn::$FUNCTION_ARN
+    echo ::set-output name=source_code_hash::$SOURCE_CODE_HASH
+    echo ::set-output name=last_modified::$LAST_MODIFIED
+fi
