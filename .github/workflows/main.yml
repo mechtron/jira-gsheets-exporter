@@ -57,7 +57,7 @@
 #         env:
 #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-name: Deploy jira-gsheets-exporter to AWS Lambda
+name: 'Deploy jira-gsheets-exporter to AWS Lambda'
 on: [push]
 jobs:
 #   hello_world_job:
