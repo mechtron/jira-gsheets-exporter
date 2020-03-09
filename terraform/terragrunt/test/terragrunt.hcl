@@ -11,6 +11,6 @@ include {
 
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
-  environment = "example"
+  environment = "test"
   ses_from_email = "mechtrondev@gmail.com"
 }

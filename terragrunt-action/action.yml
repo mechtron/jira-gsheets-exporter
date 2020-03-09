@@ -1,0 +1,22 @@
+name: Deploy Terraform via Terragrunt
+description: Built to deploy our custom lambda-exporter module
+inputs:
+  env:
+    description: The name of the Terragrunt environment
+    required: true
+  tf_action:
+    description: Terraform apply or destroy?
+    required: true
+outputs:
+  function_arn:
+    description: The Lambda function's ARN
+  source_code_hash:
+    description: The Lambda-generated hash of the function's source code
+  last_modified:
+    description: The Lambda function's source code last modified date
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.env }}
+    - ${{ inputs.tf_action }}

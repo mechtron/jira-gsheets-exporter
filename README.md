@@ -4,7 +4,7 @@ By Corey Gale (`mechtrondev[at]gmail.com`)
 
 ## Executive summary
 
-Exports data for a particular Jira project to a Google Sheet for further analysis. Includes Terraform IaC to provision an AWS Lambda function that runs every hour to keep your Google Sheet data up-to-date.
+Exports data for a particular Jira project to a Google Sheet for further analysis. Provisions a AWS Lambda function that runs every hour to keep your Google Sheet data up-to-date.
 
 ## Features
 
@@ -12,29 +12,16 @@ Exports data for a particular Jira project to a Google Sheet for further analysi
 1. Easy configuration: write a few lines of yaml to export your Jira project's custom data shape
 1. Updates Google Sheets very quickly (single API call)
 1. Includes AWS Lambda function with hourly CloudWatch Events trigger
+1. Built-in GitHub Actions deployment workflow
 1. (coming soon) Email notifications via SES for failed executions
-
-## AWS infrastructure
-
-#### Resources
-
-- Lambda function triggered by CloudWatch Events (fires hourly)
-- CloudWatch Log Stream for Lambda function output
-
-#### Estimated cost
-
-All of the AWS resources provisioned by this project fit within [AWS's always-free tier](https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=tier%23always-free). Just to be safe, I suggest that you set up a [billing alarm](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/monitor_estimated_charges_with_cloudwatch.html) for your AWS account to avoid any bill shock.
 
 ## Deploying `jira-gsheets-exporter` to your AWS account
 
-### Dependencies
+### Fork this repo
 
-1. `make`
-1. Terraform v0.12.x
-1. Terragrunt v0.21.x
-1. [`credstash`](https://github.com/fugue/credstash)
+1. [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) this repository to your GitHub account
 
-### Setup credentials
+### Obtain the necessary credentials
 
 1. Obtain Google OAuth2 credentials:
 	1. Open the [Google Developers Console](https://console.developers.google.com/project), select your organization and create a new project/select an existing one.
@@ -49,23 +36,55 @@ All of the AWS resources provisioned by this project fit within [AWS's always-fr
 	1. From the dialog that appears, enter a memorable label for your token and click "Create"
 	1. Click "Copy to clipboard" and paste the token elsewhere for reference later
 
-1. Install the [`credstash`](https://github.com/fugue/credstash#setting-up-credstash) CLI and setup a new credstash table named `credstash`: `credstash -t credstash setup`. If you wish to use another table name, be sure to update the `credstash_table` value in `terraform/terragrunt/prod/terragrunt.hcl`.
+1. Create an AWS service user account with the following policy:
+	```
+	{
+		"Version": "2012-10-17",
+		"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [
+					"acm:*",
+					"cloudwatch:*",
+					"dynamodb:*"
+					"events:*",
+					"iam:*",
+					"lambda:*",
+					"logs:*",
+					"s3:*"
+				],
+				"Resource": "*"
+			}
+		]
+	}
+	```
+	NOTE: reducing this policy to just the resources covered by this project is an exercise left to the reader.
 
-1. Populate the following credstash secrets:
-	1. `google_creds_json`: `credstash -t credstash put google_creds_json <your-google-service-account-json>`
-	1. `jira_api_email`: `credstash -t credstash put jira_api_email <your-jira-email>`
-	1. `jira_api_token`: `credstash -t credstash put jira_api_token <your-jira-token>`
+1. Populate your secrets in GitHub:
+	1. Navigate to the main page of your forked version of this repository. Under your repository name, click  Settings.
+	1. In the left sidebar, click Secrets.
+	1. Populate each of the following secrets:
 
-### Deploy
+	| Name | Description |
+	| :----: | :----: |
+	| `AWS_ACCESS_KEY_ID` | Your AWS service account's Access key ID (from the previous step) |
+	| `AWS_SECRET_ACCESS_KEY` | Your AWS service account's Access secret access key (from the previous step) |
+	| `GOOGLE_SERVICE_CREDS_JSON` | Your Google OAuth2 credentials (contents of JSON file) |
+	| `JIRA_API_EMAIL` | Your Jira API user's email |
+	| `JIRA_API_TOKEN` | Your Jira API token |
 
-1. Update the shared Terragrunt values in `terraform/terragrunt/terragrunt.hcl` to match your AWS account's configuration.
+### Update prod environment config
+
+1. Update the shared Terragrunt values in `terraform/terragrunt/terragrunt.hcl` to match your AWS account's configuration. At the very least, you will need to specify a S3 bucket and DynamoDB table to use for handling Terraform state:
+	1. `remote_state['config']['bucket']`
+	1. `remote_state['config']['lock_table']`
+
+	NOTE: if you are not deploying to AWS's `us-east-1` region, please specify your desired region by updating the `inputs` variable `aws_region` at the bottom of `terraform/terragrunt/terragrunt.hcl`.
 1. Open/create the target Google Sheets spreadsheet and share it with the email contained in the Google auth JSON (under `client_email`). Make sure the user has "Can edit" permissions.
-1. Pick a name for your environment (example: "API", "dev", "QA")
-1. Copy the `example` environment's Terragrunt values from `terraform/terragrunt/example/terragrunt.hcl` to `terraform/terragrunt/<your_environment_name>/terragrunt.hcl` and update the following values:
-	1. `environment` is the name of your environment 
+1. Open the `prod` environment's Terragrunt values `terraform/terragrunt/prod/terragrunt.hcl` and update the following values:
+	1. `environment` is the name of your environment
 	1. `ses_from_email` is the address you wish to send failure notification emails from.
-1. Copy the `example` environment's config yaml from `config/example.yml` to `config/<your_environment_name>.yml` and update the values to define the shape of your report:
-
+1. Open the `prod` environment's config yaml `config/prod.yml` and update the values to define the shape of your report:
 	| Parameter | Description | Allowed values | Additional required fields |
 	| :----: | :----: | :----: | :----: |
 	| `jira.base_url` | Your Jira project's base URL. Example: `your-company.jira.com` | `String` |  |
@@ -78,27 +97,53 @@ All of the AWS resources provisioned by this project fit within [AWS's always-fr
 	| `report_columns[].regex_capture` | Advanced: select a sub-string of a field's value | Regex `String` with capture group |  |
 	| `report_columns[].date_formatter` | Advanced: convert a selected field's value to a Google-sheet friendly date format | `google_sheets` |  |
 
-1. Deploy your environment (using the Terragrunt variables stored in `terraform/terragrunt/<your_environment_name>/terragrunt.hcl`):
+1. Commit your changes to the `master` branch and your `prod` environment will be deployed via GitHub Actions
 
-		ENV=<your_environment_name> TF_ACTION=apply make terragrunt
+### Destroying environments
 
-### Destroy
+To destroy an environment, update `tf_action` from `apply` to `destroy` in `.github/workflows/main.yml` under the "Run Terragrunt" step and commit/push your changes. This will delete all resources created by Terraform.
 
-To destroy an environment (in this case `prod`), set the `TF_ACTION` environment variable to `destroy`:
+NOTE: the environment selected will be based on the branch (`master` branch corresponds to `prod`, all other branches `test`)
 
-	ENV=<your_environment_name> TF_ACTION=destroy make terragrunt
+### Test environment
 
-### Creating new environments
+Commits made to branches other than `master` automatically update the `test` environment with that branch's changes. But before you use the `test` environment, you must update the `test` environment's config using the procedure outlined above in *Update prod environment config*.
 
-Creating new environments is as easy as creating a new Terragrunt environment folder:
+### Create a new environment
 
-1. Copy `terraform/terragrunt/<your_environment_name>/terragrunt.hcl` to a new sub-directory under `terraform/terragrunt/`. The name that you choose for this directory will be your new environment's name.
-1. Update the environment's name in the newly copied `terragrunt.hcl` file under the `inputs` section near the end of the file.
-1. Deploy your environment with `make`:
+Creating new environments is easy:
 
-		ENV=<your_environment_name> TF_ACTION=apply make terragrunt
+1. Pick a name for your environment (example: `API`, `dev`, `QA`)
+1. Copy the `prod` environment's Terragrunt values from `terraform/terragrunt/prod/terragrunt.hcl` to `terraform/terragrunt/<your_environment_name>/terragrunt.hcl` and update the following values:
+	1. `environment` is the name of your environment 
+	1. `ses_from_email` is the address you wish to send failure notification emails from
+1. Copy the `prod` environment's config yaml from `config/prod.yml` to `config/<your_environment_name>.yml` and update the values to define the shape of your report (see table above for values)
+1. Pick a branch name to track your new environment. Every time this branch is updated, GitHub Actions will update your environment. Add this branch/environment relationship in `set-env-action/entrypoint.sh`. Example update:
+
+	```
+	if [[ $GITHUB_REF = "refs/heads/master" ]]
+	then
+		export ENV="prod"
+	elif [[ $GITHUB_REF = "refs/heads/<your_branch_name>" ]]
+	then
+		export ENV="<your_environment_name>"
+	else
+		export ENV="test"
+	fi
+	```
+1. Create and check-out your new environment's branch. Commit your changes from the previous step - your new environment will be automatically created by GitHub Actions.
+
+## AWS infrastructure
+
+#### Resources
+
+- Lambda function triggered by CloudWatch Events (fires hourly)
+- CloudWatch Log Stream for Lambda function output
+
+#### Estimated cost
+
+All of the AWS resources provisioned by this project fit within [AWS's always-free tier](https://aws.amazon.com/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=tier%23always-free). Just to be safe, I suggest that you set up a [billing alarm](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/monitor_estimated_charges_with_cloudwatch.html) for your AWS account to avoid any bill shock.
 
 ## To do
 
 1. Send failure notifications via SES
-1. Add GitHub Actions deployment pipeline
