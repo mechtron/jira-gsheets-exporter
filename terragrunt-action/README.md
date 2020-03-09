@@ -1,21 +1,39 @@
-# Hello world docker action
+# terragrunt-action
 
-This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
+This action executes Terraform via Terragrunt and stores module exports as GitHub Action outputs.
 
 ## Inputs
 
-### `who-to-greet`
+### `env`
 
-**Required** The name of the person to greet. Default `"World"`.
+**Required** The name of the Terragrunt environment
+
+### `tf_action`
+
+**Required** Terraform `apply` or `destroy`?
 
 ## Outputs
+
+### `function_arn`
+
+The Lambda function's ARN
 
 ### `source_code_hash`
 
 The Lambda-generated hash of the function's source code
 
+### `last_modified`
+
+The Lambda function's source code last modified date
+
 ## Example usage
 
-uses: actions/hello-world-docker-action@0.1.0
+```
+uses: mechtron/jira-gsheets-exporter/terragrunt-action@2.0.0
 with:
-  who-to-greet: 'Mona the Octocat'
+  env: prod
+  tf_action: apply
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
