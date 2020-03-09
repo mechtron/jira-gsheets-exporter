@@ -17,10 +17,10 @@ jobs:
         pip install -r $GITHUB_WORKSPACE/exporter/requirements.txt -t $GITHUB_WORKSPACE/exporter
     - name: Set environment
       id: set_env
-      uses: mechtron/jira-gsheets-exporter/set-env-action@github-actions
+      uses: mechtron/jira-gsheets-exporter/set-env-action@1.0.0
     - name: Run Terragrunt
       id: run_terragrunt
-      uses: mechtron/jira-gsheets-exporter/terragrunt-action@github-actions
+      uses: mechtron/jira-gsheets-exporter/terragrunt-action@1.0.0
       with:
         env: ${{ steps.set_env.outputs.env }}
         tf_action: apply
