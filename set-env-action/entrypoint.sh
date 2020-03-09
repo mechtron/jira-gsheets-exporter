@@ -5,7 +5,7 @@ set -e
 # Set ENV
 if [[ $GITHUB_REF = "refs/heads/master" ]]
 then
-    export ENV="ops"
+    export ENV="prod"
 else
     export ENV="test"
 fi
