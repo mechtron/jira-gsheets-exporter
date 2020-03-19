@@ -27,9 +27,6 @@
     - column_name: Story Points
       type: field
       field_name: customfield_10013
-    - column_name: Business Value
-      type: field
-      field_name: customfield_13920
     - column_name: Status
       type: field
       field_name: status.statusCategory.name
