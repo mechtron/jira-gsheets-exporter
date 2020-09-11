@@ -29,7 +29,7 @@ The Lambda function's source code last modified date
 ## Example usage
 
 ```
-uses: mechtron/jira-gsheets-exporter/terragrunt-action@2.0.0
+uses: mechtron/jira-gsheets-exporter/terragrunt-action@2.0.1
 with:
   env: prod
   tf_action: apply

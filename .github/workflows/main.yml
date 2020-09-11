@@ -20,7 +20,7 @@ jobs:
       uses: mechtron/jira-gsheets-exporter/set-env-action@2.0.0
     - name: Run Terragrunt
       id: run_terragrunt
-      uses: mechtron/jira-gsheets-exporter/terragrunt-action@2.0.0
+      uses: mechtron/jira-gsheets-exporter/terragrunt-action@2.0.1
       with:
         env: ${{ steps.set_env.outputs.env }}
         tf_action: apply
