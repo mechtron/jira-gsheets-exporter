@@ -133,6 +133,10 @@ def update_jira_data(config, worksheet, issues):
             cell_list[i * column_count + current_column].value = value
             current_column += 1
 
+    # Blank null cells
+    for cell in cell_list:
+        if cell.value is None:
+            cell.value = ""
     worksheet.update_cells(cell_list, value_input_option="USER_ENTERED")
 
 
