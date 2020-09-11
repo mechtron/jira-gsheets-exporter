@@ -29,6 +29,13 @@ def convert_to_gsheets_friendly_date(jira_date_string):
     return datetime_parsed.strftime("%m/%d/%Y %H:%M:%S")
 
 
+def regex_get_first_capture_group(input_string, regex):
+    match = re.search(r"{}".format(regex), input_string)
+    if match:
+        return match.group(1)
+    return None
+
+
 def update_jira_data(config, worksheet, issues):
     print("Updating Jira data..")
     column_count = len(config["report_columns"])
@@ -70,12 +77,26 @@ def update_jira_data(config, worksheet, issues):
             # Feature: Regex capture
             if "regex_capture" in column and value != "":
                 if isinstance(value, list):
-                    value = value[0]
-                match = re.search(
-                    r"{}".format(column["regex_capture"]), value,
-                )
-                if match:
-                    value = match.group(1)
+                    captured_values = []
+                    for item in value:
+                        captured_value = regex_get_first_capture_group(
+                            item,
+                            column["regex_capture"],
+                        )
+                        if captured_value:
+                            captured_values.append(captured_value)
+                    if len(captured_values) > 0:
+                        if "regex_capture_sort" in column:
+                            captured_values.sort()
+                        if column["regex_capture_sort"] == "first":
+                            value = captured_values[0]
+                        if column["regex_capture_sort"] == "last":
+                            value = captured_values[-1]
+                else:
+                    value = regex_get_first_capture_group(
+                        value,
+                        column["regex_capture"],
+                    )
 
             # Feature: Date formatter
             if "date_formatter" in column and value != "":

@@ -39,7 +39,8 @@
     - column_name: Sprint
       type: field
       field_name: customfield_10560
-      regex_capture: "name=([A-Za-z0-9 _#-]*)" 
+      regex_capture: "name=([A-Za-z0-9 _#-]*)"
+      regex_capture_sort: last
     - column_name: Date Created
       type: field
       field_name: created

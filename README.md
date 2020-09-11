@@ -95,6 +95,7 @@ Exports data for a particular Jira project to a Google Sheet for further analysi
 	| `report_columns[].column_name` | Name of the Google Sheet column | `String` |  |
 	| `report_columns[].type` | The type of Jira issue data to export | `key`, `field` or ` issue_link` | If `type=key`: `key`,  if `type=field`: `field_name` |
 	| `report_columns[].regex_capture` | Advanced: select a substring of a field's value | Regex `String` with capture group |  |
+	| `report_columns[].regex_capture_sort` | Advanced: when applying regex captures on arrays, optionally sort list of resulting captures and select first/last element | `first` or `last` |  |
 	| `report_columns[].date_formatter` | Advanced: convert a selected field's value to a Google-sheet friendly date format | `google_sheets` |  |
 
 1. Commit your changes to the `master` branch and your `prod` environment will be deployed via GitHub Actions
