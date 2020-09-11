@@ -1,6 +1,8 @@
 .terraform
 .terragrunt-cache
 
+.vscode
+
 exporter/__pycache__
 exporter/venv
 exporter/bin
