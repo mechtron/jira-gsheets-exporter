@@ -36,6 +36,25 @@ def regex_get_first_capture_group(input_string, regex):
     return None
 
 
+def get_nested_value(data, nested_key):
+    keys = nested_key.split(".")
+    value = data[keys[0]]
+    if value:
+        for key in keys[1:]:
+            if isinstance(value, list):
+                value = value[0][key]
+            else:
+                value = value[key]
+    return value
+
+
+def get_customfield_value(custom_field, custom_field_key):
+    value = custom_field[custom_field_key]
+    if hasattr(value, "__contains__") and "value" in value:
+        value = value["value"]
+    return value
+
+
 def update_jira_data(config, worksheet, issues):
     print("Updating Jira data..")
     column_count = len(config["report_columns"])
@@ -49,22 +68,24 @@ def update_jira_data(config, worksheet, issues):
                 value = issues[i][column["key"]]
 
             elif column["type"] == "field":
+                # Custom fields with nested keys support:
+                if (
+                    "customfield_" in column["field_name"] and
+                    "." in column["field_name"]
+                ):
+                    value = get_nested_value(issues[i]["fields"], column["field_name"])
+
                 # Custom field support:
-                if "customfield_" in column["field_name"]:
-                    if (
-                        column["field_name"] in issues[i]["fields"]
-                        and issues[i]["fields"][column["field_name"]]
-                    ):
-                        value = issues[i]["fields"][column["field_name"]]
-                        if hasattr(value, "__contains__") and "value" in value:
-                            value = value["value"]
+                if (
+                    "customfield_" in column["field_name"] and
+                    column["field_name"] in issues[i]["fields"]
+                ):
+                    value = get_customfield_value(issues[i]["fields"], column["field_name"])
+
                 # Nested key support:
                 elif "." in column["field_name"]:
-                    keys = column["field_name"].split(".")
-                    value = issues[i]["fields"][keys[0]]
-                    if value:
-                        for key in keys[1:]:
-                            value = value[key]
+                    value = get_nested_value(issues[i]["fields"], column["field_name"])
+
                 else:
                     value = issues[i]["fields"][column["field_name"]]
 
