@@ -38,9 +38,8 @@
       field_name: assignee.displayName
     - column_name: Sprint
       type: field
-      field_name: customfield_10560
-      regex_capture: "name=([A-Za-z0-9 _#-]*)"
-      regex_capture_sort: last
+      field_name: customfield_10560.name
+      selector: last
     - column_name: Date Created
       type: field
       field_name: created

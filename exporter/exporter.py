@@ -36,13 +36,16 @@ def regex_get_first_capture_group(input_string, regex):
     return None
 
 
-def get_nested_value(data, nested_key):
+def get_nested_value(data, nested_key, selector="first"):
+    if selector not in ("first", "last"):
+        exit("Unknown selector {}".format(column["selector"]))
+    list_index_to_take = 0 if selector == "first" else -1
     keys = nested_key.split(".")
     value = data[keys[0]]
     if value:
         for key in keys[1:]:
             if isinstance(value, list):
-                value = value[0][key]
+                value = value[list_index_to_take][key]
             else:
                 value = value[key]
     return value
@@ -68,15 +71,24 @@ def update_jira_data(config, worksheet, issues):
                 value = issues[i][column["key"]]
 
             elif column["type"] == "field":
+                # Feature: customfield array item selector
+                customfield_array_selector = "first"
+                if "selector" in column:
+                    customfield_array_selector = column["selector"]
+
                 # Custom fields with nested keys support:
                 if (
                     "customfield_" in column["field_name"] and
                     "." in column["field_name"]
                 ):
-                    value = get_nested_value(issues[i]["fields"], column["field_name"])
+                    value = get_nested_value(
+                        issues[i]["fields"],
+                        column["field_name"],
+                        customfield_array_selector,
+                    )
 
                 # Custom field support:
-                if (
+                elif (
                     "customfield_" in column["field_name"] and
                     column["field_name"] in issues[i]["fields"]
                 ):
