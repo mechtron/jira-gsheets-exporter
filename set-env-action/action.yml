@@ -1,8 +1,0 @@
-name: Set environment
-description: Set environment name based on Git branch
-outputs:
-  env:
-    description: The computed environment name
-runs:
-  using: docker
-  image: Dockerfile
